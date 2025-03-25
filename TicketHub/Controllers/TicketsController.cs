@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Text.Json;
+using Azure.Storage.Queues;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TicketHub;
 
@@ -29,20 +31,46 @@ namespace TicketHub.Controllers
 
 
         [HttpPost]
-        public IActionResult Post(Ticket contact)
+        public async Task<IActionResult> Post(Ticket contact)
         {
 
             //Validation classes: 
             //https://learn.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations?view=net-9.0
 
-            //This uses the validation inside Contact.cs
+            //This uses the validation inside Ticket.cs
             if (ModelState.IsValid == false)
             {
                 return BadRequest(ModelState);
             }
 
+            //
+            // Post content to queue
+            //
 
-            return Ok("Hello " + contact.name + " from the Tickets Controller - POST");
+            string queueName = "tickets";
+
+            // Get connection string from secrets.json
+            string? connectionString = _configuration["AzureStorageConnectionString"];
+
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                return BadRequest("An error was encountered");
+            }
+
+            QueueClient queueClient = new QueueClient(connectionString, queueName);
+
+            // serialize an object to json
+            string message = JsonSerializer.Serialize(contact);
+
+            // send string message to queue
+            await queueClient.SendMessageAsync(message);
+
+            //await queueClient.SendMessageAsync("Hello from the API App!");
+
+
+
+
+            return Ok("Sucess - message posted to Storage Queue");
         }
 
 
