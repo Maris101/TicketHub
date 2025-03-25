@@ -6,7 +6,7 @@ namespace TicketHub
     {
         public int concertId { get; set; } = 0;
 
-        [MaxLength(50, ErrorMessage = "Name must be less than 50 characters.")]
+        [MaxLength(10, ErrorMessage = "Name must be less than 10 characters.")]
         [Required(ErrorMessage = "Name is required")]
         public string name { get; set; } = string.Empty;
 
@@ -35,12 +35,15 @@ namespace TicketHub
         public string securityCode { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Address is required")]
+        [MaxLength(20, ErrorMessage = "Address must be less than 30 characters.")]
         public string address { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "City is required")]
+        [MaxLength(20, ErrorMessage = "City must be less than 20 characters.")]
         public string city { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Province is required")]
+        [MaxLength(20, ErrorMessage = "Province must be less than 50 characters.")]
         public string province { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Postal Code is required")]
@@ -48,6 +51,7 @@ namespace TicketHub
         public string postalCode { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Country is required")]
+        [MaxLength(20, ErrorMessage = "Country must be less than 20 characters.")]
         public string country { get; set; } = string.Empty;
     }
 }
