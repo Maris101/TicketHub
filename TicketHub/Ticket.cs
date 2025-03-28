@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 
 namespace TicketHub
 {
@@ -8,7 +11,8 @@ namespace TicketHub
 
         [MaxLength(10, ErrorMessage = "Name must be less than 10 characters.")]
         [Required(ErrorMessage = "Name is required")]
-        public string name { get; set; } = string.Empty;
+        [DefaultValue("Liam")]
+        public string name { get; set; } = "Liam";
 
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid email format.")]
@@ -16,36 +20,45 @@ namespace TicketHub
 
         [Required(ErrorMessage = "Phone Number is required")]
         [Phone(ErrorMessage = "Invalid phone number format.")]
-        public string phone { get; set; } = string.Empty;
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "Phone number must be 10 digits.")]
+        [DefaultValue("3299123")]
+        public string phone { get; set; } = "3299123";
 
         [Required(ErrorMessage = "A Quantity is required")]
         [Range(1, 5, ErrorMessage = "Quantity must be between 1 and 5.")]
         public int quantity { get; set; } = 1;
 
-
         [Required(ErrorMessage = "Credit card is required")]
-        [StringLength(16, MinimumLength = 16, ErrorMessage = "Invaild Credit Card Format")]
-        public string creditCard { get; set; } = string.Empty;
+        [StringLength(16, MinimumLength = 16, ErrorMessage = "Invalid Credit Card Format")]
+        [RegularExpression(@"^\d{16}$", ErrorMessage = "Credit card must contain only numeric digits.")]
+        [DefaultValue("1234567890123456")]
+        public string creditCard { get; set; } = "1234567890123456";
 
         [Required(ErrorMessage = "Expiration field is required")]
         [RegularExpression(@"^(0[1-9]|1[0-2])\/\d{2}$", ErrorMessage = "Expiration date must be in MM/YY format.")]
+        [CustomExpirationValidation(ErrorMessage = "Expiration date must be in the future.")]
         public string expiration { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Security Code is required")]
         [RegularExpression(@"^\d{3,4}$", ErrorMessage = "Invalid security code. It must be 3 or 4 digits.")]
+        [MinLength(3, ErrorMessage = "Security code must be at least 3 digits.")]
+        [MaxLength(4, ErrorMessage = "Security code must be at most 4 digits.")]
         public string securityCode { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Address is required")]
-        [MaxLength(20, ErrorMessage = "Address must be less than 30 characters.")]
-        public string address { get; set; } = string.Empty;
+        [MaxLength(20, ErrorMessage = "Address must be less than 20 characters.")]
+        [DefaultValue("123 Main St")]
+        public string address { get; set; } = "123 Main St";
 
         [Required(ErrorMessage = "City is required")]
         [MaxLength(20, ErrorMessage = "City must be less than 20 characters.")]
-        public string city { get; set; } = string.Empty;
+        [DefaultValue("Halifax")]
+        public string city { get; set; } = "Halifax";
 
         [Required(ErrorMessage = "Province is required")]
         [MaxLength(20, ErrorMessage = "Province must be less than 50 characters.")]
-        public string province { get; set; } = string.Empty;
+        [DefaultValue("Nova Scotia")]
+        public string province { get; set; } = "Nova Scotia";
 
         [Required(ErrorMessage = "Postal Code is required")]
         [RegularExpression(@"^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$", ErrorMessage = "Invalid postal code format. Use format A1A 1A1.")]
@@ -53,6 +66,25 @@ namespace TicketHub
 
         [Required(ErrorMessage = "Country is required")]
         [MaxLength(20, ErrorMessage = "Country must be less than 20 characters.")]
-        public string country { get; set; } = string.Empty;
+        [DefaultValue("Canada")]
+        public string country { get; set; } = "Canada";
+    }
+
+    // Custom expiration validation attribute
+    public class CustomExpirationValidationAttribute : ValidationAttribute
+    {
+        public override bool IsValid(object value)
+        {
+            if (value == null)
+                return false;
+
+            var expiration = value.ToString();
+            if (DateTime.TryParseExact(expiration, "MM/yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var expirationDate))
+            {
+                return expirationDate > DateTime.Now; // Ensure expiration is in the future
+            }
+
+            return false; // Invalid format or expired date
+        }
     }
 }
