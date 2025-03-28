@@ -32,26 +32,26 @@ namespace TicketHub
 
         [Required(ErrorMessage = "Security Code is required")]
         [RegularExpression(@"^\d{3,4}$", ErrorMessage = "Invalid security code. It must be 3 or 4 digits.")]
-        public string securityCode { get; set; } = string.Empty;
+        public string securityCode { get; set; } = "01/26";
 
         [Required(ErrorMessage = "Address is required")]
         [MaxLength(20, ErrorMessage = "Address must be less than 30 characters.")]
-        public string address { get; set; } = string.Empty;
+        public string address { get; set; } = "123 Main St";
 
         [Required(ErrorMessage = "City is required")]
         [MaxLength(20, ErrorMessage = "City must be less than 20 characters.")]
-        public string city { get; set; } = string.Empty;
+        public string city { get; set; } = "Halifax";
 
         [Required(ErrorMessage = "Province is required")]
-        [MaxLength(20, ErrorMessage = "Province must be less than 50 characters.")]
-        public string province { get; set; } = string.Empty;
+        [MaxLength(20, ErrorMessage = "Province must be less than 20 characters.")]
+        public string province { get; set; } = "Nova Scotia";
 
         [Required(ErrorMessage = "Postal Code is required")]
         [RegularExpression(@"^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$", ErrorMessage = "Invalid postal code format. Use format A1A 1A1.")]
-        public string postalCode { get; set; } = string.Empty;
+        public string postalCode { get; set; } = "B3P 1C4";
 
         [Required(ErrorMessage = "Country is required")]
         [MaxLength(20, ErrorMessage = "Country must be less than 20 characters.")]
-        public string country { get; set; } = string.Empty;
+        public string country { get; set; } = "Canada";
     }
 }
