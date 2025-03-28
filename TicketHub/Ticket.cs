@@ -21,7 +21,7 @@ namespace TicketHub
         [Required(ErrorMessage = "Phone Number is required")]
         [Phone(ErrorMessage = "Invalid phone number format.")]
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Phone number must be 10 digits.")]
-        [DefaultValue("3299123")]
+        [DefaultValue("1234567891")]
         public string phone { get; set; } = "3299123";
 
         [Required(ErrorMessage = "A Quantity is required")]
@@ -36,7 +36,6 @@ namespace TicketHub
 
         [Required(ErrorMessage = "Expiration field is required")]
         [RegularExpression(@"^(0[1-9]|1[0-2])\/\d{2}$", ErrorMessage = "Expiration date must be in MM/YY format.")]
-        [CustomExpirationValidation(ErrorMessage = "Expiration date must be in the future.")]
         public string expiration { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Security Code is required")]
@@ -68,23 +67,5 @@ namespace TicketHub
         [MaxLength(20, ErrorMessage = "Country must be less than 20 characters.")]
         [DefaultValue("Canada")]
         public string country { get; set; } = "Canada";
-    }
-
-    // Custom expiration validation attribute
-    public class CustomExpirationValidationAttribute : ValidationAttribute
-    {
-        public override bool IsValid(object value)
-        {
-            if (value == null)
-                return false;
-
-            var expiration = value.ToString();
-            if (DateTime.TryParseExact(expiration, "MM/yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var expirationDate))
-            {
-                return expirationDate > DateTime.Now; // Ensure expiration is in the future
-            }
-
-            return false; // Invalid format or expired date
-        }
     }
 }
